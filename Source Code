@@ -1,0 +1,119 @@
+#include<iostream>
+#include <iomanip>
+using namespace std;
+
+char board[3][3] = {{'1','2','3'},
+                    {'4','5','6'},
+                    {'7','8','9'}};//we're creating a 3 X 3 matrix which is like same as tic tac toe board.
+
+int current_player;
+char current_marker;
+
+void drawBoard()
+{
+    //This is drawing checkboard
+    cout<<" "<<board[0][0]<<" | "<<board[0][1]<<" | "<<board[0][2]<<endl;
+    cout<<"-----------"<<endl;
+    cout<<" "<<board[1][0]<<" | "<<board[1][1]<<" | "<<board[1][2]<<endl;
+    cout<<"-----------"<<endl;
+    cout<<" "<<board[2][0]<<" | "<<board[2][1]<<" | "<<board[2][2]<<endl<<endl;
+    //cout<<"-----------"<<endl;
+}
+
+bool placeMarker(int slot)
+{
+    //main slots logic to assigning at particular slot according to user's choice.
+    int row = slot/3;
+    int col;
+    if(slot%3==0)
+    {
+        row = row-1;
+        col = 2;
+    }
+    else{
+        col = slot%3-1;
+    }
+    if(board[row][col] != 'X' && board[row][col] != 'O') {
+        board[row][col] = current_marker;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+int winner()
+{
+    for(int i = 0; i<3;++i)
+    {
+        if(board[i][0] == board[i][1] && board[i][1] == board[i][2])return current_player;
+        if(board[0][i] == board[1][i] && board[1][i] == board[2][i])return current_player;
+    }
+    if(board[0][0] == board[1][1] && board[1][1] == board[2][2])return current_player;
+    if(board[2][0] == board[1][1] && board[1][1] == board[0][2])return current_player;
+    return 0;
+}
+
+void swap_player_and_marker()
+{
+    (current_marker == 'X')?current_marker = 'O':current_marker = 'X';
+    (current_player == 1)?current_player = 2:current_player = 1;
+}
+
+
+int game()
+{
+    cout << "Player 1 :\nChoose your marker('O' or 'X')"<<endl;
+    char marker_p1;
+    cin >> marker_p1;
+
+    current_player = 1;
+    current_marker = marker_p1;
+    drawBoard();
+    int player_won;
+
+    for(int i = 0; i < 9; i++)
+    {
+        cout << "It's player " << current_player << "'s turn.\nEnter your slot: ";
+        int slot;
+        cin >> slot;
+        //checking if it is a valid slot option or not.
+        if(slot < 1 || slot > 9) {
+            cout << "Slot is invalid! Try another slot!"<<endl;
+            i--;//decreasing i value because we can't skip player chance.
+            continue;
+        }
+
+        if(!placeMarker(slot)) {
+            cout << "Slot occupied! Try another slot!"<<endl;
+            i--;
+            continue;
+        }
+        drawBoard();
+
+        player_won = winner();
+        //printing result and terminating control.
+        if(player_won == 1)
+        {
+            cout<< "          Cheers!!!\n          Player 1 has won!\n          Congratulations!!"; break;
+        }
+        if(player_won == 2)
+        {
+            cout<<"           Cheers!!!\n          Player 2 has won!\n          Congratulations!!"; break;
+        }
+
+        swap_player_and_marker();
+    }
+    //if all 9 moves has been played and no one has won then it will print draw.
+    if(player_won == 0)
+    {
+        cout << "Game is draw!";
+    }
+    return 0;
+}
+
+int main()
+{
+    cout << setw (35)<<"TIC TAC TOE "<<endl;
+    game();//invoking function at main
+    return 0;
+}
